@@ -27,7 +27,9 @@ jobs:
 
       - name: Install dependencies
         working-directory: backend/${{ matrix.service }}
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
 
       - name: Run pytest
         working-directory: backend/${{ matrix.service }}
@@ -53,7 +55,7 @@ jobs:
         run: |
           docker build -t $ACR/customer_service:latest -t $ACR/customer_service:${IMAGE_TAG} ./backend/customer_service
           docker build -t $ACR/order_service:latest -t $ACR/order_service:${IMAGE_TAG} ./backend/order_service
-          docker build -t $ACR/product_service:latest -t $ACR/product_service:${IMAGE_TAG} ./backend/product_service
+          docker build -t $ACR/product_service:latest -t $ACR/product_service:${IMAGE_TAG}
           docker build -t $ACR/frontend:latest -t $ACR/frontend:${IMAGE_TAG} ./frontend
 
       - name: Push Docker images
