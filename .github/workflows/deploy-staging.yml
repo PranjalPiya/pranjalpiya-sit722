@@ -35,6 +35,6 @@ jobs:
       - name: Run smoke test
         run: echo "✅ Staging deployment successful. Do manual or trivial acceptance test now."
 
-      - name: Cleanup staging
-        if: always()
-        run: kubectl delete namespace staging
+      # - name: Cleanup staging
+      #   if: always()
+      #   run: kubectl delete namespace staging
