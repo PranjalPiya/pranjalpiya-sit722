@@ -1,0 +1,35 @@
+name: CD - Deploy to Staging
+
+on:
+  workflow_run:
+    workflows: ["step 4 - CI testing and push to ACR"]
+    types:
+      - completed
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context
+        run: |
+          az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.AKS_NAME }} --overwrite-existing
+
+      - name: Create staging namespace
+        run: kubectl create namespace staging || echo "namespace already exists"
+
+      - name: Deploy services to staging
+        run: kubectl apply -f k8s/ -n staging
+
+      - name: Wait for frontend to be ready
+        run: kubectl rollout status deployment/frontend -n staging --timeout=120s
+
+      - name: Smoke test
+        run: kubectl get pods -n staging
