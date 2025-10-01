@@ -7,10 +7,10 @@ on:
 env:
   PYTHON_VERSION: "3.10"
   IMAGE_TAG: ${{ github.sha }}
-  ACR: ${{ secrets.ACR_NAME }}.azurecr.io
+  ACR: sit722pranjalpiyaacr.azurecr.io
 
 jobs:
-  # ---- 1. Run tests for each backend ----
+  # ---- 1. Run tests 
   test-backends:
     runs-on: ubuntu-latest
     strategy:
@@ -35,7 +35,7 @@ jobs:
         working-directory: backend/${{ matrix.service }}
         run: pytest -q tests || echo "Tests failed, continuing..."
 
-  # ---- 2. Build and push images to ACR (only if tests pass) ----
+  # ---- 2. Build and push images to your ACR ----
   build-and-push:
     needs: test-backends
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: ACR login
-        run: az acr login --name ${{ secrets.ACR_NAME }}
+        run: az acr login --name sit722pranjalpiyaacr
 
       - name: Build Docker images
         run: |
