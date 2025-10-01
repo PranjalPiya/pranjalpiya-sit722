@@ -10,7 +10,7 @@ env:
   ACR: sit722pranjalpiyaacr.azurecr.io
 
 jobs:
-  # ---- 1. Run tests
+  # ---- 1. Run tests test
   test-backends:
     runs-on: ubuntu-latest
     strategy:
