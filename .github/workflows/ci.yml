@@ -1,4 +1,4 @@
-name: CI - Build & Push to ACR
+name: CI - Stage 1 Test and Push to ACR
 
 on:
   push:
@@ -29,13 +29,13 @@ jobs:
         working-directory: backend/${{ matrix.service }}
         run: |
           pip install -r requirements.txt
-          pip install pytest
+          pip install pytest httpx
 
       - name: Run pytest
         working-directory: backend/${{ matrix.service }}
         run: pytest -q tests
 
-  # ---- 2. Build and push images to ACR ----
+  # ---- 2. Build and push images to ACR (only if tests pass) ----
   build-and-push:
     needs: test-backends
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
         run: |
           docker build -t $ACR/customer_service:latest -t $ACR/customer_service:${IMAGE_TAG} ./backend/customer_service
           docker build -t $ACR/order_service:latest -t $ACR/order_service:${IMAGE_TAG} ./backend/order_service
-          docker build -t $ACR/product_service:latest -t $ACR/product_service:${IMAGE_TAG}
+          docker build -t $ACR/product_service:latest -t $ACR/product_service:${IMAGE_TAG} ./backend/product_service
           docker build -t $ACR/frontend:latest -t $ACR/frontend:${IMAGE_TAG} ./frontend
 
       - name: Push Docker images
